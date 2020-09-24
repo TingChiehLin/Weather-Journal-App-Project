@@ -43,8 +43,9 @@
     width: 500px;
     height: 500px;
     font-size: 2rem;
-    color: white;
+    color: black;
     margin-top: 2rem;
+    margin-left: 2rem;
 }
 
 .title {

@@ -1,36 +1,29 @@
 const path = require('path');
 const express = require('express');
 const router = express.Router();
-// const projectdata = {};
+let projectData = {};
 
 router.get('/',(req,res,next) => {
     res.sendFile(path.join(__dirname, '../','views','/index.html'));
 });
 
-router.get("*", (req, res) => {
-    res.send("Page not found.");
-})
-
-// router.get('/result',(req,res) => {
-//     res.status(200).send(projectData);
-// });
+router.get('/result',(req,res) => {
+    res.sendFile(path.join(__dirname,'../','views','/result.html'));
+    
+});
 
 //Post Route
 router.post('/result',(req, res) => {
-    
-    // projectData.push({
-    //     temperature: req.body.temp,
-    //     date: req.body.date,
-    //     content: req.body.content
-    // });
-
-    //console.log(req.body);
-    // res.status(200).send({
-    //     sucess: true,
-    //     message: "Data send successfully",
-    //     data: projectData
-    // });
+    projectData = ({
+        temperature: req.body.temp,
+        date: req.body.date,
+        content: req.body.content
+    });
+    res.send(projectData);
 });
 
+router.get("*", (req, res) => {
+    res.send("Page not found.");
+})
 
 module.exports.routes = router;

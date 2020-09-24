@@ -1,10 +1,12 @@
 const generateButton = document.getElementById('generate');
 const zipInput = document.getElementById('zip');
 const form = document.getElementById('form');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const openWeatherMapData = {
     BASE_URL: "http://api.openweathermap.org/data/2.5/weather?zip=",
-    KEY:"cf301ca20db80baafb28fee8d8d13a95"
+    KEY: process.env.API_KEY
 }
 
 // Get Weather Data API
@@ -13,7 +15,6 @@ async function fetchWeatherData(zipCode) {
         "GET",
         openWeatherMapData.BASE_URL + `${zipCode}` + ",us" + "&appid=" + openWeatherMapData.KEY
     );
-    // console.log("responseData: " + responseData);
     return responseData;
 }
 
@@ -34,12 +35,12 @@ function generateData() {
     }
 
     //Response Weather Data Temperature
-    const allData = fetchWeatherData(zipCode);
-    console.log(allData);
-    
-    //Create a result
-    createPost(newDate,allData,content);
-    form.reset();   
+    fetchWeatherData(zipCode).then((allData) => {
+        console.log(allData);
+        //Create a result
+        createPost(newDate,allData,content);
+        form.reset(); 
+    });
 }
 
 function sendHttpRequest(method, url, data) {
@@ -55,10 +56,7 @@ function sendHttpRequest(method, url, data) {
             // }
         }).then(response => {
             if (response.status >= 200 && response.status < 300) {
-                return response.json().then(allData => {
-                    console.log(allData);
-                    //updateUI();
-                });
+                return response.json();
             } else {
                 return response.json().then(errData => {
                     console.log(errData);
@@ -76,11 +74,12 @@ async function createPost(newDate,data,content) {
         content: content
     };
 
-    const fd = new FormData(form);
+    const fd = new FormData(projectData);
     fd.append('date',newDate);
     fd.append('temp',data.main.temp);
     fd.append('content',content);
     sendHttpRequest('POST', "/result",fd);
+    updateUI();
 }
 
 //Update UI
